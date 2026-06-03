@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Invitación de Amor · Sábado 6 de Junio</title>
+    <!-- Google Fonts y Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP para animaciones suaves -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Confetti para celebraciones -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+    <style>
+        /* Fondo claro y romántico: degradado de rosa pastel a durazno */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 50%, #ffd9e6 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1.5rem;
+        }
+
+        /* Tarjeta Glassmorfismo con tonos blancos/rosados */
+        .glass-card {
+            background: rgba(255, 245, 250, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 105, 180, 0.5);
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 182, 193, 0.3) inset;
+            transition: all 0.3s ease;
+        }
+
+        /* Botones con estilo romántico (rosa/dorado) */
+        .btn-gold {
+            background: rgba(255, 105, 180, 0.15);
+            border: 1px solid #ff69b4;
+            color: #b13e6b;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+            font-weight: 500;
+        }
+        .btn-gold:hover {
+            background: #ff69b4;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+            transform: scale(1.02);
+        }
+
+        .btn-dark {
+            background: rgba(255, 200, 210, 0.7);
+            border: 1px solid #db7093;
+            color: #8b3a5c;
+        }
+
+        /* Efecto carta animada */
+        .letter-card {
+            transform-style: preserve-3d;
+        }
+
+        /* Botón travieso que se mueve */
+        .naughty-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.3, 0.7, 1);
+        }
+
+        /* Animación flotante sutil con brillo rosado */
+        .floating-glow {
+            animation: gentleFloat 3s infinite ease-in-out;
+        }
+        @keyframes gentleFloat {
+            0% { transform: translateY(0px); box-shadow: 0 0 5px rgba(255,105,180,0.2); }
+            50% { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(255,105,180,0.3); }
+            100% { transform: translateY(0px); box-shadow: 0 0 5px rgba(255,105,180,0.2); }
+        }
+
+        /* Cursor personalizado con corazón rosa */
+        body {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 24 24"><path fill="%23ff69b4" d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5 2,5.41 4.42,3 7.5,3c1.74,0 3.41.81 4.5,2.08C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.41 22,8.5c0,3.77-3.4,6.86-8.55,11.54L12,21.35Z"/></svg>') 12 20, auto;
+        }
+        button, [role="button"] {
+            cursor: pointer;
+        }
+        
+        .detail-card {
+            transition: all 0.3s ease;
+            background: rgba(255, 240, 245, 0.7);
+            border-color: rgba(255, 105, 180, 0.4);
+        }
+        .detail-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff69b4;
+            background: rgba(255, 105, 180, 0.15);
+            box-shadow: 0 5px 15px rgba(255,105,180,0.2);
+        }
+        
+        .text-love {
+            color: #8b3a5c;
+        }
+        .text-rose-gold {
+            color: #c75c7e;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="w-full max-w-2xl mx-auto transition-all duration-700"></div>
+
+    <script>
+        // ****************** CONTROL DE PANTALLAS ******************
+        // 0: intro, 1: carta de amor, 2: carta de invitación a la cita, 3: detalles velada, 4: cuenta regresiva + aceptación
+        let currentScreen = 0;
+        let finalTimerInterval = null;
+        let acceptTimerInterval = null;
+        const appRoot = document.getElementById('app');
+
+        function stopFinalTimer() {
+            if (finalTimerInterval) {
+                clearInterval(finalTimerInterval);
+                finalTimerInterval = null;
+            }
+        }
+        
+        function stopAcceptTimer() {
+            if (acceptTimerInterval) {
+                clearInterval(acceptTimerInterval);
+                acceptTimerInterval = null;
+            }
+        }
+
+        function popConfetti(intensity = 'medium') {
+            if (intensity === 'heavy') {
+                canvasConfetti({ particleCount: 250, spread: 120, origin: { y: 0.6 }, colors: ['#ff69b4', '#ffb6c1', '#ff1493', '#ff85b3'] });
+                canvasConfetti({ particleCount: 100, spread: 70, origin: { y: 0.7, x: 0.2 }, startVelocity: 18, colors: ['#ff69b4', '#ffb6c1'] });
+                canvasConfetti({ particleCount: 100, spread: 70, origin: { y: 0.7, x: 0.8 }, startVelocity: 18, colors: ['#ff69b4', '#ffb6c1'] });
+            } else if (intensity === 'light') {
+                canvasConfetti({ particleCount: 80, spread: 55, origin: { y: 0.6 }, colors: ['#ff69b4', '#ffc0cb'] });
+            } else {
+                canvasConfetti({ particleCount: 140, spread: 85, origin: { y: 0.5 }, colors: ['#ffb6c1', '#ff69b4', '#ff85b3'] });
+            }
+        }
+
+        // ------------------ FUNCIONES DE CUENTA REGRESIVA ------------------
+        function getTargetDate() {
+            const now = new Date();
+            let year = now.getFullYear();
+            let target = new Date(year, 5, 6, 22, 30, 0);
+            if (target < now) {
+                target = new Date(year + 1, 5, 6, 22, 30, 0);
+            }
+            return target;
+        }
+
+        function updateDynamicCountdown() {
+            const target = getTargetDate();
+            const now = new Date();
+            const diffMs = target - now;
+            if (diffMs <= 0) {
+                return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+            }
+            const totalSec = Math.floor(diffMs / 1000);
+            const days = Math.floor(totalSec / 86400);
+            const hours = Math.floor((totalSec % 86400) / 3600);
+            const minutes = Math.floor((totalSec % 3600) / 60);
+            const seconds = totalSec % 60;
+            return { days, hours, minutes, seconds, expired: false };
+        }
+
+        function formatTimerDisplay(remaining) {
+            if (remaining.expired) {
+                return "¡Es hoy, 6 de junio! La cena nos espera ✨";
+            }
+            const d = remaining.days;
+            const h = remaining.hours.toString().padStart(2, '0');
+            const m = remaining.minutes.toString().padStart(2, '0');
+            const s = remaining.seconds.toString().padStart(2, '0');
+            return `${d}d : ${h}h : ${m}m : ${s}s`;
+        }
+
+        function updateTimerDisplay(elementId, remaining) {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.innerText = formatTimerDisplay(remaining);
+            }
+        }
+
+        // ------------------ PANTALLA 0: INTRO ------------------
+        function renderIntro() {
+            return `
+                <div id="introScreen" class="glass-card p-8 md:p-12 text-center flex-col items-center justify-center min-h-[460px]">
+                    <div class="mb-6 opacity-0" id="introAnimationBlock">
+                        <div class="text-7xl mb-3">💖</div>
+                        <h1 class="text-4xl md:text-5xl font-light tracking-wide text-[#8b3a5c]">Tengo algo que preguntarte...</h1>
+                        <div class="w-20 h-0.5 bg-gradient-to-r from-pink-400 via-pink-300 to-pink-400 mx-auto my-6"></div>
+                    </div>
+                    <button id="continueBtn0" class="btn-gold px-9 py-3 rounded-full text-lg font-medium mt-5 tracking-wide shadow-xl">Continuar →</button>
+                </div>
+            `;
+        }
+
+        // ------------------ PANTALLA 1: CARTA DE AMOR ------------------
+        function renderLoveLetter() {
+            return `
+                <div id="loveLetterStage" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center relative">
+                    <div id="loveLetterMagic" class="w-full max-w-md cursor-pointer relative letter-card">
+                        <div id="loveEnvelopeClosed" class="bg-pink-100/60 backdrop-blur-sm border border-pink-400/60 rounded-2xl p-8 shadow-2xl floating-glow">
+                            <div class="text-7xl mb-3">💌</div>
+                            <p class="text-[#b13e6b] text-xl">Toca para abrir la carta</p>
+                        </div>
+                        <div id="loveEnvelopeOpened" style="display: none;" class="bg-gradient-to-br from-[#fff0f5] to-[#ffe4e1] border border-pink-400/70 rounded-2xl p-6 shadow-2xl">
+                            <div class="text-5xl mb-4">✨💕</div>
+                            <p class="text-xl md:text-2xl font-light text-[#8b3a5c] leading-relaxed">
+                                "Cada día me enamoro más de ti,<br>
+                                y me encanta poder compartir momentos a tu lado."
+                            </p>
+                            <div class="mt-7 text-right">
+                                <button id="nextFromLoveLetterBtn" class="btn-gold text-sm px-6 py-2 rounded-full">Continuar →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachLoveLetterOpen() {
+            const closed = document.getElementById('loveEnvelopeClosed');
+            const opened = document.getElementById('loveEnvelopeOpened');
+            if (closed) {
+                closed.addEventListener('click', () => {
+                    gsap.to(closed, {
+                        scale: 0.75,
+                        opacity: 0,
+                        rotationY: 100,
+                        duration: 0.55,
+                        ease: "back.in",
+                        onComplete: () => {
+                            closed.style.display = 'none';
+                            opened.style.display = 'block';
+                            gsap.fromTo(opened,
+                                { opacity: 0, rotationY: -45, y: 25 },
+                                { opacity: 1, rotationY: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }
+                            );
+                            popConfetti('light');
+                        }
+                    });
+                });
+            }
+            const nextBtn = document.getElementById('nextFromLoveLetterBtn');
+            if (nextBtn) nextBtn.addEventListener('click', () => goToScreen(2));
+        }
+
+        // ------------------ PANTALLA 2: CARTA DE INVITACIÓN A LA CITA ------------------
+        function renderInviteLetter() {
+            return `
+                <div id="inviteLetterStage" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center relative">
+                    <div id="inviteLetterMagic" class="w-full max-w-md cursor-pointer relative letter-card">
+                        <div id="inviteEnvelopeClosed" class="bg-pink-100/60 backdrop-blur-sm border border-pink-400/60 rounded-2xl p-8 shadow-2xl floating-glow">
+                            <div class="text-7xl mb-3">💌✨</div>
+                            <p class="text-[#b13e6b] text-xl">Toca para seguir descubriendo</p>
+                        </div>
+                        <div id="inviteEnvelopeOpened" style="display: none;" class="bg-gradient-to-br from-[#fff0f5] to-[#ffe4e1] border border-pink-400/70 rounded-2xl p-6 shadow-2xl">
+                            <div class="text-5xl mb-4">🌹💖</div>
+                            <p class="text-xl md:text-2xl font-light text-[#8b3a5c] leading-relaxed">
+                                "Quiero invitarte a una cita muy especial...<br>
+                                Una noche solo para nosotros dos,<br>
+                                de esas que se guardan en el corazón para siempre."
+                            </p>
+                            <div class="mt-7 text-right">
+                                <button id="nextFromInviteLetterBtn" class="btn-gold text-sm px-6 py-2 rounded-full">Continuar →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachInviteLetterOpen() {
+            const closed = document.getElementById('inviteEnvelopeClosed');
+            const opened = document.getElementById('inviteEnvelopeOpened');
+            if (closed) {
+                closed.addEventListener('click', () => {
+                    gsap.to(closed, {
+                        scale: 0.75,
+                        opacity: 0,
+                        rotationY: 100,
+                        duration: 0.55,
+                        ease: "back.in",
+                        onComplete: () => {
+                            closed.style.display = 'none';
+                            opened.style.display = 'block';
+                            gsap.fromTo(opened,
+                                { opacity: 0, rotationY: -45, y: 25 },
+                                { opacity: 1, rotationY: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }
+                            );
+                            popConfetti('light');
+                        }
+                    });
+                });
+            }
+            const nextBtn = document.getElementById('nextFromInviteLetterBtn');
+            if (nextBtn) nextBtn.addEventListener('click', () => goToScreen(3));
+        }
+
+        // ------------------ PANTALLA 3: DETALLES DE LA VELADA ------------------
+        function renderDetails() {
+            return `
+                <div id="detailsScreen" class="glass-card p-6 md:p-9 text-center min-h-[460px] flex flex-col items-center justify-center">
+                    <div class="mb-3">
+                        <div class="text-6xl mb-2">🌹💗</div>
+                        <h2 class="text-3xl md:text-4xl font-light text-[#8b3a5c]">Detalles de la noche</h2>
+                        <p class="text-[#c75c7e] mt-2 max-w-sm">He preparado algo especial solo para ti</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-lg mx-auto mt-6">
+                        <div class="detail-card rounded-xl p-4 border text-center">
+                            <div class="text-3xl mb-2">📅💕</div>
+                            <p class="text-[#b13e6b] text-sm font-semibold uppercase tracking-wide">Fecha</p>
+                            <p class="text-[#8b3a5c] text-lg font-medium mt-1">Sábado 6 de junio</p>
+                        </div>
+                        <div class="detail-card rounded-xl p-4 border text-center">
+                            <div class="text-3xl mb-2">🍽️💖</div>
+                            <p class="text-[#b13e6b] text-sm font-semibold uppercase tracking-wide">La cena</p>
+                            <p class="text-[#8b3a5c] text-lg font-medium mt-1">Hecha por mí</p>
+                            <p class="text-[#c75c7e]/70 text-xs mt-1">Menú secreto</p>
+                        </div>
+                        <div class="detail-card rounded-xl p-4 border text-center">
+                            <div class="text-3xl mb-2">👗💗</div>
+                            <p class="text-[#b13e6b] text-sm font-semibold uppercase tracking-wide">Dress code</p>
+                            <p class="text-[#8b3a5c] text-lg font-medium mt-1">Algo bonito</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 w-full">
+                        <button id="continueToInvite" class="btn-gold px-8 py-3 rounded-full text-base font-medium shadow-lg transition-all">
+                            Quiero saber más 
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachDetailsEvents() {
+            const continueBtn = document.getElementById('continueToInvite');
+            if (continueBtn) continueBtn.addEventListener('click', () => goToScreen(4));
+            gsap.fromTo(".detail-card", 
+                { opacity: 0, y: 30, scale: 0.9 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(0.5)" }
+            );
+        }
+
+        // ------------------ PANTALLA 4: INVITACIÓN FINAL CON CONTADOR EN VIVO ------------------
+        function startFinalTimer() {
+            stopFinalTimer();
+            const updateTimer = () => {
+                const remaining = updateDynamicCountdown();
+                updateTimerDisplay('timerDisplay', remaining);
+                if (remaining.expired) {
+                    stopFinalTimer();
+                }
+            };
+            updateTimer();
+            finalTimerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function renderFinalInvite() {
+            const remaining = updateDynamicCountdown();
+            return `
+                <div id="finalInviteScreen" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center">
+                    <div class="mb-2 text-5xl">💘⏳</div>
+                    <h3 class="text-2xl text-[#8b3
