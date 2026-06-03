@@ -109,7 +109,6 @@
 
     <script>
         // ****************** CONTROL DE PANTALLAS ******************
-        // 0: intro, 1: carta de amor, 2: carta de invitación a la cita, 3: detalles velada, 4: cuenta regresiva + aceptación
         let currentScreen = 0;
         let finalTimerInterval = null;
         let acceptTimerInterval = null;
@@ -199,23 +198,23 @@
             `;
         }
 
-        // ------------------ PANTALLA 1: CARTA DE AMOR ------------------
-        function renderLoveLetter() {
+        // ------------------ PANTALLA 1: CARTA CON NUEVO MENSAJE ------------------
+        function renderLetter() {
             return `
-                <div id="loveLetterStage" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center relative">
-                    <div id="loveLetterMagic" class="w-full max-w-md cursor-pointer relative letter-card">
-                        <div id="loveEnvelopeClosed" class="bg-pink-100/60 backdrop-blur-sm border border-pink-400/60 rounded-2xl p-8 shadow-2xl floating-glow">
+                <div id="letterStage" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center relative">
+                    <div id="letterMagic" class="w-full max-w-md cursor-pointer relative letter-card">
+                        <div id="envelopeClosed" class="bg-pink-100/60 backdrop-blur-sm border border-pink-400/60 rounded-2xl p-8 shadow-2xl floating-glow">
                             <div class="text-7xl mb-3">💌</div>
                             <p class="text-[#b13e6b] text-xl">Toca para abrir la carta</p>
                         </div>
-                        <div id="loveEnvelopeOpened" style="display: none;" class="bg-gradient-to-br from-[#fff0f5] to-[#ffe4e1] border border-pink-400/70 rounded-2xl p-6 shadow-2xl">
+                        <div id="envelopeOpened" style="display: none;" class="bg-gradient-to-br from-[#fff0f5] to-[#ffe4e1] border border-pink-400/70 rounded-2xl p-6 shadow-2xl">
                             <div class="text-5xl mb-4">✨💕</div>
                             <p class="text-xl md:text-2xl font-light text-[#8b3a5c] leading-relaxed">
                                 "Cada día me enamoro más de ti,<br>
                                 y me encanta poder compartir momentos a tu lado."
                             </p>
                             <div class="mt-7 text-right">
-                                <button id="nextFromLoveLetterBtn" class="btn-gold text-sm px-6 py-2 rounded-full">Continuar →</button>
+                                <button id="nextFromLetterBtn" class="btn-gold text-sm px-6 py-2 rounded-full">Continuar →</button>
                             </div>
                         </div>
                     </div>
@@ -223,9 +222,9 @@
             `;
         }
 
-        function attachLoveLetterOpen() {
-            const closed = document.getElementById('loveEnvelopeClosed');
-            const opened = document.getElementById('loveEnvelopeOpened');
+        function attachLetterOpen() {
+            const closed = document.getElementById('envelopeClosed');
+            const opened = document.getElementById('envelopeOpened');
             if (closed) {
                 closed.addEventListener('click', () => {
                     gsap.to(closed, {
@@ -246,70 +245,18 @@
                     });
                 });
             }
-            const nextBtn = document.getElementById('nextFromLoveLetterBtn');
+            const nextBtn = document.getElementById('nextFromLetterBtn');
             if (nextBtn) nextBtn.addEventListener('click', () => goToScreen(2));
         }
 
-        // ------------------ PANTALLA 2: CARTA DE INVITACIÓN A LA CITA ------------------
-        function renderInviteLetter() {
-            return `
-                <div id="inviteLetterStage" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center relative">
-                    <div id="inviteLetterMagic" class="w-full max-w-md cursor-pointer relative letter-card">
-                        <div id="inviteEnvelopeClosed" class="bg-pink-100/60 backdrop-blur-sm border border-pink-400/60 rounded-2xl p-8 shadow-2xl floating-glow">
-                            <div class="text-7xl mb-3">💌✨</div>
-                            <p class="text-[#b13e6b] text-xl">Toca para seguir descubriendo</p>
-                        </div>
-                        <div id="inviteEnvelopeOpened" style="display: none;" class="bg-gradient-to-br from-[#fff0f5] to-[#ffe4e1] border border-pink-400/70 rounded-2xl p-6 shadow-2xl">
-                            <div class="text-5xl mb-4">🌹💖</div>
-                            <p class="text-xl md:text-2xl font-light text-[#8b3a5c] leading-relaxed">
-                                "Quiero invitarte a una cita muy especial...<br>
-                                Una noche solo para nosotros dos,<br>
-                                de esas que se guardan en el corazón para siempre."
-                            </p>
-                            <div class="mt-7 text-right">
-                                <button id="nextFromInviteLetterBtn" class="btn-gold text-sm px-6 py-2 rounded-full">Continuar →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function attachInviteLetterOpen() {
-            const closed = document.getElementById('inviteEnvelopeClosed');
-            const opened = document.getElementById('inviteEnvelopeOpened');
-            if (closed) {
-                closed.addEventListener('click', () => {
-                    gsap.to(closed, {
-                        scale: 0.75,
-                        opacity: 0,
-                        rotationY: 100,
-                        duration: 0.55,
-                        ease: "back.in",
-                        onComplete: () => {
-                            closed.style.display = 'none';
-                            opened.style.display = 'block';
-                            gsap.fromTo(opened,
-                                { opacity: 0, rotationY: -45, y: 25 },
-                                { opacity: 1, rotationY: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }
-                            );
-                            popConfetti('light');
-                        }
-                    });
-                });
-            }
-            const nextBtn = document.getElementById('nextFromInviteLetterBtn');
-            if (nextBtn) nextBtn.addEventListener('click', () => goToScreen(3));
-        }
-
-        // ------------------ PANTALLA 3: DETALLES DE LA VELADA ------------------
+        // ------------------ PANTALLA 2: DETALLES ------------------
         function renderDetails() {
             return `
                 <div id="detailsScreen" class="glass-card p-6 md:p-9 text-center min-h-[460px] flex flex-col items-center justify-center">
                     <div class="mb-3">
                         <div class="text-6xl mb-2">🌹💗</div>
                         <h2 class="text-3xl md:text-4xl font-light text-[#8b3a5c]">Detalles de la noche</h2>
-                        <p class="text-[#c75c7e] mt-2 max-w-sm">He preparado algo especial solo para ti</p>
+                        <p class="text-[#c75c7e] mt-2 max-w-sm">He preparado algo para ti</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-lg mx-auto mt-6">
                         <div class="detail-card rounded-xl p-4 border text-center">
@@ -340,14 +287,14 @@
 
         function attachDetailsEvents() {
             const continueBtn = document.getElementById('continueToInvite');
-            if (continueBtn) continueBtn.addEventListener('click', () => goToScreen(4));
+            if (continueBtn) continueBtn.addEventListener('click', () => goToScreen(3));
             gsap.fromTo(".detail-card", 
                 { opacity: 0, y: 30, scale: 0.9 },
                 { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(0.5)" }
             );
         }
 
-        // ------------------ PANTALLA 4: INVITACIÓN FINAL CON CONTADOR EN VIVO ------------------
+        // ------------------ PANTALLA 3: INVITACIÓN FINAL CON CONTADOR EN VIVO ------------------
         function startFinalTimer() {
             stopFinalTimer();
             const updateTimer = () => {
@@ -366,4 +313,160 @@
             return `
                 <div id="finalInviteScreen" class="glass-card p-6 md:p-10 text-center min-h-[460px] flex flex-col items-center justify-center">
                     <div class="mb-2 text-5xl">💘⏳</div>
-                    <h3 class="text-2xl text-[#8b3
+                    <h3 class="text-2xl text-[#8b3a5c] font-light">¿Aceptas la cita?</h3>
+                    <div class="my-3 space-y-2">
+                        <p class="text-[#b13e6b]/90 text-md"><span class="font-semibold text-[#c75c7e]">📅 Sábado 6 de junio - 10:30 PM</span> · <span class="font-semibold text-[#c75c7e]">🍽️ Cena hecha por mí</span></p>
+                        <p class="text-[#b13e6b]/80 text-md italic">✨ Dress code: <span class="text-[#c75c7e] font-medium">algo bonito</span></p>
+                    </div>
+                    <div class="my-5 text-3xl md:text-4xl font-mono tracking-wider bg-white/60 px-6 py-3 rounded-2xl border border-pink-400/50 text-[#8b3a5c]" id="timerDisplay">
+                        ${formatTimerDisplay(remaining)}
+                    </div>
+                    <p class="text-[#c75c7e]/70 text-sm mb-5">Tiempo restante para nuestra cita 💕</p>
+                    
+                    <div id="decisionButtons" class="flex flex-wrap gap-6 justify-center items-center mt-2">
+                        <button id="yesMission" class="btn-gold px-9 py-3 rounded-full text-xl font-semibold">✅ ¡Acepto la cita</button>
+                        <button id="trickNoBtn" class="btn-dark px-9 py-3 rounded-full text-xl font-semibold naughty-btn relative">❌ Rechazar</button>
+                    </div>
+                    <div id="mischiefMsg" class="mt-5 text-rose-500 text-sm min-h-[48px]"></div>
+                </div>
+            `;
+        }
+
+        function attachFinalDecision() {
+            const yesBtn = document.getElementById('yesMission');
+            const noBtn = document.getElementById('trickNoBtn');
+            const msgBox = document.getElementById('mischiefMsg');
+            
+            if (yesBtn) {
+                yesBtn.addEventListener('click', () => {
+                    // Detener el intervalo del contador anterior
+                    stopFinalTimer();
+                    
+                    const finalDiv = document.getElementById('finalInviteScreen');
+                    if (finalDiv) {
+                        // Obtener el tiempo restante actual
+                        const remaining = updateDynamicCountdown();
+                        
+                        finalDiv.innerHTML = `
+                            <div class="flex flex-col items-center justify-center py-8 px-4">
+                                <div class="text-8xl mb-5">🎉💖💕</div>
+                                <h2 class="text-3xl md:text-5xl font-bold text-[#b13e6b]">¡Cita aceptada!</h2>
+                                <p class="text-[#8b3a5c] text-xl mt-4">Te prepararé algo bonito.<br> El <span class="font-semibold text-[#c75c7e]">sábado 6 de junio a las 10:30 PM</span> nos vemos.</p>
+                                <div class="mt-4 bg-white/60 rounded-2xl p-3 border border-pink-400/40 inline-block">
+                                    <p class="text-[#8b3a5c] text-md">Cena hecha por mí 😋</p>
+                                    <p class="text-[#c75c7e] text-sm">Dress code: algo bonito</p>
+                                </div>
+                                <div class="mt-6 w-full">
+                                    <div class="text-[#b13e6b]/70 text-sm mb-2">Tiempo restante para nuestra cita:</div>
+                                    <div class="text-2xl md:text-3xl font-mono tracking-wider bg-white/60 px-5 py-3 rounded-2xl border border-pink-400/50 text-[#8b3a5c]" id="acceptedTimerDisplay">
+                                        ${formatTimerDisplay(remaining)}
+                                    </div>
+                                </div>
+                                <button id="restartExp" class="mt-9 btn-gold px-5 py-2 rounded-full text-sm">Ver de nuevo</button>
+                            </div>
+                        `;
+                        popConfetti('heavy');
+                        
+                        // Iniciar el contador en tiempo real para la pantalla de aceptación
+                        stopAcceptTimer();
+                        const updateAcceptTimer = () => {
+                            const remainingNow = updateDynamicCountdown();
+                            const timerSpan = document.getElementById('acceptedTimerDisplay');
+                            if (timerSpan) {
+                                timerSpan.innerText = formatTimerDisplay(remainingNow);
+                                if (remainingNow.expired) {
+                                    stopAcceptTimer();
+                                }
+                            } else {
+                                stopAcceptTimer();
+                            }
+                        };
+                        updateAcceptTimer();
+                        acceptTimerInterval = setInterval(updateAcceptTimer, 1000);
+                        
+                        const restart = document.getElementById('restartExp');
+                        if (restart) restart.addEventListener('click', () => window.location.reload());
+                    }
+                });
+            }
+
+            if (noBtn) {
+                let movesCount = 0;
+                const moveNoButton = () => {
+                    if (!document.body.contains(noBtn)) return;
+                    const parentRect = noBtn.parentElement?.getBoundingClientRect();
+                    const btnRect = noBtn.getBoundingClientRect();
+                    const maxShiftX = (parentRect?.width || 320) - btnRect.width - 35;
+                    const randomX = Math.max(5, Math.min(maxShiftX, Math.random() * maxShiftX * 0.7));
+                    const randomY = (Math.random() * 60) - 20;
+                    noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                    noBtn.style.position = 'relative';
+                    movesCount++;
+                    if (movesCount === 1) msgBox.innerText = "¿Seguro que quieres rechazar una cena hecha por mí? 💕";
+                    if (movesCount === 2) msgBox.innerText = "No hay manera de decir que no... ¡el corazón quiere que aceptes! 💖";
+                    if (movesCount === 3) msgBox.innerText = "El dresscode 'algo bonito' te espera, ¡no puedes escapar! 💗";
+                    if (movesCount >= 4) {
+                        msgBox.innerText = "🙈 El 'No' se rinde... Mejor dale al botón rosado y acepta la velada.";
+                        noBtn.innerText = "Mejor SÍ 😅";
+                        noBtn.disabled = true;
+                        noBtn.style.opacity = "0.6";
+                    }
+                };
+                noBtn.addEventListener('mouseenter', moveNoButton);
+                noBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    msgBox.innerText = "¡No se puede rechazar una cena tan especial! Elige 'Acepto la cita' 💫 (Es sábado 6 de junio a las 10:30 PM, será inolvidable)";
+                    moveNoButton();
+                    popConfetti('light');
+                });
+                noBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    msgBox.innerText = "Intento fallido ✨ presiona el botón rosado y confirma tu asistencia";
+                    moveNoButton();
+                });
+            }
+        }
+
+        // ****************** RENDER GENERAL ******************
+        function goToScreen(screenIndex) {
+            stopFinalTimer();
+            stopAcceptTimer();
+            currentScreen = screenIndex;
+            renderCurrentScreen();
+        }
+
+        function renderCurrentScreen() {
+            if (!appRoot) return;
+            let html = '';
+            if (currentScreen === 0) html = renderIntro();
+            else if (currentScreen === 1) html = renderLetter();
+            else if (currentScreen === 2) html = renderDetails();
+            else if (currentScreen === 3) html = renderFinalInvite();
+            else html = renderIntro();
+            
+            appRoot.innerHTML = html;
+            
+            if (currentScreen === 0) {
+                gsap.fromTo("#introAnimationBlock", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.2 });
+                const btnCont = document.getElementById('continueBtn0');
+                if (btnCont) btnCont.addEventListener('click', () => goToScreen(1));
+            } 
+            else if (currentScreen === 1) {
+                attachLetterOpen();
+                gsap.fromTo("#letterMagic", { scale: 0.96, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7 });
+            }
+            else if (currentScreen === 2) {
+                attachDetailsEvents();
+                gsap.fromTo("#detailsScreen", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 });
+            }
+            else if (currentScreen === 3) {
+                startFinalTimer();
+                attachFinalDecision();
+                gsap.fromTo("#finalInviteScreen", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.7 });
+            }
+        }
+        
+        renderCurrentScreen();
+    </script>
+</body>
+</html>
